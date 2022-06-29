@@ -12,3 +12,7 @@
 input, button {
   margin: 8px;
 }
+
+label {
+  text-transform: capitalize;
+}
