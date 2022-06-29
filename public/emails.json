@@ -1,0 +1,28 @@
+{
+  "emails": [
+    {
+      "id": 1,
+      "email": "asd@gmail.com"
+    },
+    {
+      "id": 2,
+      "email": "andzrej@gmail.com"
+    },
+    {
+      "id": 3,
+      "email": "rafau@o2.pl"
+    },
+    {
+      "id": 4,
+      "email": "abcd@yahoo.com"
+    },
+    {
+      "id": 5,
+      "email": "abcd@wp.pl"
+    },
+    {
+      "id": 6,
+      "email": "anna@wp.pl"
+    }
+  ]
+}
