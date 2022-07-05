@@ -22,7 +22,7 @@ const Register = () => {
   const [pass2Error, setPass2Error] = useState(false);
 
   const getEmails = async () => {
-    await fetch("../../../emails.json")
+    await fetch("/emails.json")
       .then((res) => res.json())
       .then((data) => setEmailData(data.emails));
   };
