@@ -1,26 +1,29 @@
-import React, { useState } from "react";
-import {
-  Name,
-  Age,
-  Interests,
-  Card,
-  // useInputHook,
-} from "./step";
+import React, { useEffect, useState } from "react";
+import { Name, Age, Interests, Card, Summary } from "./step";
 
 import { useForm } from "react-hook-form";
-import Summary from "./step/Summary";
-// import InputStep from "./step/InputStep";
 
 const StepFormControl = () => {
   const [step, setStep] = useState(1);
+  const [currentWatch, setCurrentWatch] = useState([]);
 
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
-  } = useForm();
-  const onSubmit = (data) => console.log(data);
-  // console.log(errors);
+  } = useForm({
+    mode: "onTouched",
+    defaultValues: {
+      name: "",
+      age: "",
+      interests: "",
+    },
+  });
+  const onSubmit = (data) => {
+    console.log(data);
+    setStep(5);
+  };
 
   const prevStep = () => {
     if (step === 1) {
@@ -30,60 +33,87 @@ const StepFormControl = () => {
   };
 
   const nextStep = () => {
-    if (step === 4) {
+    if (step >= 4) {
       return;
     }
     setStep((prevState) => prevState + 1);
   };
 
-  // console.log(step);
-
   const currentStep = () => {
     switch (step) {
       case 1:
         return (
-          <Card>
-            <p>Step 1</p>
+          <>
+            <p>Step {step}</p>
             <Name
-              {...register("name", { required: true, maxLength: 20 })}
-              hasError={errors.name}
+              watchName={currentWatch.name}
+              nextStep={nextStep}
+              errors={errors.name}
+              autoComplete="disabled"
+              {...register("name", {
+                required: true,
+                minLength: 3,
+                maxLength: 20,
+              })}
               type="text"
             />
-          </Card>
+          </>
         );
       case 2:
         return (
-          <Card>
-            <p>Step 2</p>
+          <>
+            <p>Step {step}</p>
             <Age
-              {...register("age", { required: true })}
-              hasError={errors.age}
+              prevStep={prevStep}
+              nextStep={nextStep}
+              errors={errors.age}
+              {...register("age", {
+                required: true,
+              })}
               type="number"
             />
-          </Card>
+          </>
         );
       case 3:
         return (
-          <Card>
-            <p>Step 3</p>
+          <>
+            <p>Step {step}</p>
             <Interests
-              {...register("interests", { required: true })}
-              hasError={errors.interests}
+              prevStep={prevStep}
+              nextStep={nextStep}
+              errors={errors.interests}
+              {...register("interests", {
+                required: true,
+                minLength: 3,
+                maxLength: 50,
+              })}
               type="text"
             />
-          </Card>
+          </>
         );
       case 4:
         return (
-          <Card>
-            <p>Step 4</p>
-            <Summary />
-          </Card>
+          <>
+            <p>Step {step}</p>
+            <Summary prevStep={prevStep} currentData={currentWatch} />
+          </>
+        );
+      case 5:
+        return (
+          <>
+            <p>Your form has been successfully submitted</p>
+            <p>Thank you!</p>
+          </>
         );
       default:
         return <p>something went wrong</p>;
     }
   };
+
+  useEffect(() => {
+    const subscription = watch((data) => setCurrentWatch(data));
+    return () => subscription.unsubscribe();
+  }, [watch]);
 
   return (
     <div style={{ display: "flex", flexDirection: "column", width: 300 }}>
@@ -96,163 +126,10 @@ const StepFormControl = () => {
           marginBottom: 50,
         }}
       >
-        {currentStep()}
-
-        <input type="submit" />
+        <Card>{currentStep()}</Card>
       </form>
-
-      <button onClick={prevStep}>prev</button>
-      <button onClick={nextStep}>next</button>
     </div>
   );
 };
 
 export default StepFormControl;
-
-// import React, { useState } from "react";
-// import { Name, Age, Interests, useInputHook, Card } from "./step";
-
-// const StepFormControl = () => {
-//   const [step, setStep] = useState(1);
-
-//   const {
-//     value: nameField,
-//     inputValueHandler: nameFieldChangeHandler,
-//     resetInput: nameFieldReset,
-//   } = useInputHook();
-
-//   const {
-//     value: ageField,
-//     inputValueHandler: ageFieldChangeHandler,
-//     resetInput: ageFieldReset,
-//   } = useInputHook();
-
-//   const {
-//     value: interestsField,
-//     inputValueHandler: interestsFieldChangeHandler,
-//     resetInput: interestsFieldReset,
-//   } = useInputHook();
-
-//   const prevStep = () => {
-//     if (step === 1) {
-//       return;
-//     }
-//     setStep((prevState) => prevState - 1);
-//   };
-
-//   const nextStep = () => {
-//     if (step === 3) {
-//       return;
-//     }
-//     setStep((prevState) => prevState + 1);
-//   };
-
-//   const submitHandler = (e) => {
-//     e.preventDefault();
-
-//     console.log(nameField, ageField, interestsField);
-
-//     nameFieldReset();
-//     ageFieldReset();
-//     interestsFieldReset();
-//   };
-
-//   // console.log(step);
-
-//   const currentStep = () => {
-//     switch (step) {
-//       case 1:
-//         return (
-//           <Card>
-//             <Name value={nameField} onchange={nameFieldChangeHandler} />
-//           </Card>
-//         );
-//       case 2:
-//         return (
-//           <Card>
-//             <Age value={ageField} onchange={ageFieldChangeHandler} />
-//           </Card>
-//         );
-//       case 3:
-//         return (
-//           <Card>
-//             <Interests
-//               value={interestsField}
-//               onchange={interestsFieldChangeHandler}
-//             />
-//           </Card>
-//         );
-//       default:
-//         return <p>za duzo albo za mao</p>;
-//     }
-//   };
-
-//   return (
-//     <div style={{ display: "flex", flexDirection: "column", width: 300 }}>
-//       <form
-//         onSubmit={submitHandler}
-//         style={{
-//           display: "flex",
-//           flexDirection: "column",
-//           textAlign: "center",
-//           marginBottom: 50,
-//         }}
-//       >
-//         {currentStep()}
-//         <input type="submit" />
-//       </form>
-//       <button onClick={prevStep}>prev</button>
-//       <button onClick={nextStep}>next</button>
-//     </div>
-//   );
-// };
-
-// export default StepFormControl;
-
-// PROBA CURERENT STEP
-
-// const currentStep = () => {
-//   switch (step) {
-//     case 1:
-//       return (
-//         <Card>
-//           <p>card1</p>
-//           <InputStep
-//             {...register("name", { required: true, maxLength: 20 })}
-//             hasError={errors.name}
-//             type="text"
-//           />
-//           {/* <Name value={nameField} onchange={nameFieldChangeHandler} /> */}
-//         </Card>
-//       );
-//     case 2:
-//       return (
-//         <Card>
-//           <p>card2</p>
-//           <InputStep
-//             {...register("age", { required: true })}
-//             hasError={errors.age}
-//             type="number"
-//           />
-//           {/* <Age value={ageField} onchange={ageFieldChangeHandler} /> */}
-//         </Card>
-//       );
-//     case 3:
-//       return (
-//         <Card>
-//           <p>card3</p>
-//           <InputStep
-//             {...register("interests", { required: true })}
-//             hasError={errors.interests}
-//             type="text"
-//           />
-//           {/* <Interests
-//             value={interestsField}
-//             onchange={interestsFieldChangeHandler}
-//           /> */}
-//         </Card>
-//       );
-//     default:
-//       return <p>za duzo albo za mao</p>;
-//   }
-// };

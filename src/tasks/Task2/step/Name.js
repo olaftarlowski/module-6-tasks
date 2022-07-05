@@ -1,40 +1,28 @@
-// const Name = ({ value, onchange }) => {
-//   return (
-//     <>
-//       <label htmlFor="name">=!=!= Name =!=!=</label>
-//       <input id="name" type="text" value={value} onChange={onchange} />
-//     </>
-//   );
-// };
-
-// export default Name;
-
 import React from "react";
 
 const Name = React.forwardRef(
-  (
-    {
-      // hasError, value, label, onBlur,
-      onChange,
-      name,
-      type,
-    },
-    ref
-  ) => {
-    // console.log(value);
-    // console.log(name)
-
+  ({ value, errors, onBlur, onChange, name, type, nextStep }, ref) => {
     return (
       <>
         <label htmlFor={name}>=!=!= {name} =!=!=</label>
         <input
           ref={ref}
           id={name}
-          // value={value}
+          value={value}
           type={type}
           name={name}
           onChange={onChange}
+          onBlur={onBlur}
+          autoComplete="off"
+          autoFocus
         />
+        {errors && <p>Too short</p>}
+
+        <div>
+          <button onClick={nextStep} disabled={errors}>
+            next
+          </button>
+        </div>
       </>
     );
   }
