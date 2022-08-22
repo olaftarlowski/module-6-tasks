@@ -6,7 +6,6 @@ import { useForm } from "react-hook-form";
 const StepFormControl = () => {
   const [step, setStep] = useState(1);
   const [currentWatch, setCurrentWatch] = useState([]);
-
   const {
     register,
     handleSubmit,
@@ -20,6 +19,15 @@ const StepFormControl = () => {
       interests: "",
     },
   });
+
+  const Steps = {
+    INIT: 1,
+    NAME: 2,
+    AGE: 3,
+    SUMMARY: 4,
+    FINAL: 5,
+  };
+
   const onSubmit = (data) => {
     console.log(data);
     setStep(5);
@@ -41,7 +49,7 @@ const StepFormControl = () => {
 
   const currentStep = () => {
     switch (step) {
-      case 1:
+      case Steps.INIT:
         return (
           <>
             <p>Step {step}</p>
@@ -59,7 +67,7 @@ const StepFormControl = () => {
             />
           </>
         );
-      case 2:
+      case Steps.NAME:
         return (
           <>
             <p>Step {step}</p>
@@ -74,7 +82,7 @@ const StepFormControl = () => {
             />
           </>
         );
-      case 3:
+      case Steps.AGE:
         return (
           <>
             <p>Step {step}</p>
@@ -91,14 +99,14 @@ const StepFormControl = () => {
             />
           </>
         );
-      case 4:
+      case Steps.SUMMARY:
         return (
           <>
             <p>Step {step}</p>
             <Summary prevStep={prevStep} currentData={currentWatch} />
           </>
         );
-      case 5:
+      case Steps.FINAL:
         return (
           <>
             <p>Your form has been successfully submitted</p>

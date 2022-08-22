@@ -8,9 +8,9 @@ const Register = () => {
   const [emailError, setEmailError] = useState(false);
   const [emailErrorTaken, setEmailErrorTaken] = useState(false);
 
-  const [pass1, setPass1] = useState("");
-  const [pass1Error, setPass1Error] = useState(false);
-  const [pass1ErrorArr, setPass1ErrorArr] = useState({
+  const [password, setPassword] = useState("");
+  const [passwordError, setPasswordError] = useState(false);
+  const [passwordErrorArr, setPasswordErrorArr] = useState({
     length: false,
     lowerCase: false,
     upperCase: false,
@@ -18,8 +18,8 @@ const Register = () => {
     specChar: false,
   });
 
-  const [pass2, setPass2] = useState("");
-  const [pass2Error, setPass2Error] = useState(false);
+  const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [passwordConfirmError, setPasswordConfirmError] = useState(false);
 
   const getEmails = async () => {
     await fetch("/emails.json")
@@ -43,12 +43,12 @@ const Register = () => {
     setEmail(e.target.value);
   };
 
-  const pass1Handler = (e) => {
-    setPass1(e.target.value);
+  const passwordHandler = (e) => {
+    setPassword(e.target.value);
   };
 
-  const pass2Handler = (e) => {
-    setPass2(e.target.value);
+  const passwordConfirmHandler = (e) => {
+    setPasswordConfirm(e.target.value);
   };
 
   const validateEmail = () => {
@@ -65,100 +65,105 @@ const Register = () => {
     }
   };
 
-  const validatePass1 = () => {
-    if (!passwordRegex.test(pass1)) {
-      setPass1Error(true);
+  const validatepassword = () => {
+    if (!passwordRegex.test(password)) {
+      setPasswordError(true);
 
       // is minimum 8
-      if (pass1.length < 8) {
-        setPass1ErrorArr((prevState) => {
+      if (password.length < 8) {
+        setPasswordErrorArr((prevState) => {
           return { ...prevState, length: true };
         });
       } else {
-        setPass1ErrorArr((prevState) => {
+        setPasswordErrorArr((prevState) => {
           return { ...prevState, length: false };
         });
       }
 
       // has lowercase letter
-      if (pass1.search(/[a-z]/) < 0) {
-        setPass1ErrorArr((prevState) => {
+      if (password.search(/[a-z]/) < 0) {
+        setPasswordErrorArr((prevState) => {
           return { ...prevState, lowerCase: true };
         });
       } else {
-        setPass1ErrorArr((prevState) => {
+        setPasswordErrorArr((prevState) => {
           return { ...prevState, lowerCase: false };
         });
       }
 
       // has uppercase letter
-      if (pass1.search(/[A-Z]/) < 0) {
-        setPass1ErrorArr((prevState) => {
+      if (password.search(/[A-Z]/) < 0) {
+        setPasswordErrorArr((prevState) => {
           return { ...prevState, upperCase: true };
         });
       } else {
-        setPass1ErrorArr((prevState) => {
+        setPasswordErrorArr((prevState) => {
           return { ...prevState, upperCase: false };
         });
       }
 
       // has a digit
-      if (pass1.search(/[0-9]/) < 0) {
-        setPass1ErrorArr((prevState) => {
+      if (password.search(/[0-9]/) < 0) {
+        setPasswordErrorArr((prevState) => {
           return { ...prevState, digit: true };
         });
       } else {
-        setPass1ErrorArr((prevState) => {
+        setPasswordErrorArr((prevState) => {
           return { ...prevState, digit: false };
         });
       }
 
       // has special character
-      if (pass1.search(/[@$!%*?&]/) < 0) {
-        setPass1ErrorArr((prevState) => {
+      if (password.search(/[@$!%*?&]/) < 0) {
+        setPasswordErrorArr((prevState) => {
           return { ...prevState, specChar: true };
         });
       } else {
-        setPass1ErrorArr((prevState) => {
+        setPasswordErrorArr((prevState) => {
           return { ...prevState, specChar: false };
         });
       }
     } else {
-      setPass1Error(false);
+      setPasswordError(false);
     }
   };
 
-  const validatePass2 = () => {
-    if (pass2 !== "" && pass1 === pass2) {
-      setPass2Error(false);
+  const validatepasswordConfirm = () => {
+    if (passwordConfirm !== "" && password === passwordConfirm) {
+      setPasswordConfirmError(false);
     } else {
-      setPass2Error(true);
+      setPasswordConfirmError(true);
     }
   };
 
   let formValid = false;
 
-  if (!emailError && !pass1Error && !pass2Error) {
+  if (!emailError && !passwordError && !passwordConfirmError) {
     formValid = true;
   }
 
   const submitHandler = (e) => {
     e.preventDefault();
     validateEmail();
-    validatePass1();
-    validatePass2();
+    validatepassword();
+    validatepasswordConfirm();
 
-    if (!formValid || pass1 === "" || pass2 === "" || email === "") {
+    if (
+      !formValid ||
+      password === "" ||
+      passwordConfirm === "" ||
+      email === ""
+    ) {
       console.log("invalid form");
       return;
     }
 
     console.log("form submitted");
-    console.log("it is working", email, pass1, pass2);
+    console.log("it is working", email, password, passwordConfirm);
 
     setEmail("");
-    setPass1("");
-    setPass2("");
+    setPassword("");
+    setPasswordConfirm("");
   };
 
   // console.log(emailData);
@@ -180,73 +185,79 @@ const Register = () => {
       {emailError && <p className="passErr">Email is incorrect</p>}
       {emailErrorTaken && <p className="passErr">Email registered already</p>}
 
-      <label htmlFor="pass1">Password 1</label>
+      <label htmlFor="password">Password 1</label>
       <input
-        id="pass1"
-        name="pass1"
+        id="password"
+        name="password"
         type="text"
-        onChange={pass1Handler}
-        onBlur={validatePass1}
-        value={pass1}
+        onChange={passwordHandler}
+        onBlur={validatepassword}
+        value={password}
         disabled={emailErrorTaken}
       />
-      {pass1Error && [
-        <p
-          className="passErr"
-          key="1"
-          style={{ color: pass1ErrorArr.length ? "darkred" : "green" }}
-        >
-          {pass1ErrorArr.length
-            ? "X - password too short"
-            : "V - password long enough"}{" "}
-        </p>,
-        <p
-          className="passErr"
-          key="2"
-          style={{ color: pass1ErrorArr.lowerCase ? "darkred" : "green" }}
-        >
-          {pass1ErrorArr.lowerCase
-            ? "X - 1 lowercase letter required"
-            : "V - 1 lowercase letter present"}
-        </p>,
-        <p
-          className="passErr"
-          key="3"
-          style={{ color: pass1ErrorArr.upperCase ? "darkred" : "green" }}
-        >
-          {pass1ErrorArr.upperCase
-            ? "X - 1 uppercase letter required"
-            : "V - 1 uppercase letter present"}
-        </p>,
-        <p
-          className="passErr"
-          key="4"
-          style={{ color: pass1ErrorArr.digit ? "darkred" : "green" }}
-        >
-          {pass1ErrorArr.digit ? "X - 1 digit required" : "V - 1 digit present"}
-        </p>,
-        <p
-          className="passErr"
-          key="5"
-          style={{ color: pass1ErrorArr.specChar ? "darkred" : "green" }}
-        >
-          {pass1ErrorArr.specChar
-            ? "X - 1 special character required"
-            : "V - 1 special character present"}
-        </p>,
-      ]}
+      {passwordError && (
+        <>
+          <p
+            className="passErr"
+            key="1"
+            style={{ color: passwordErrorArr.length ? "darkred" : "green" }}
+          >
+            {passwordErrorArr.length
+              ? "X - password too short"
+              : "V - password long enough"}{" "}
+          </p>
+          <p
+            className="passErr"
+            key="2"
+            style={{ color: passwordErrorArr.lowerCase ? "darkred" : "green" }}
+          >
+            {passwordErrorArr.lowerCase
+              ? "X - 1 lowercase letter required"
+              : "V - 1 lowercase letter present"}
+          </p>
+          <p
+            className="passErr"
+            key="3"
+            style={{ color: passwordErrorArr.upperCase ? "darkred" : "green" }}
+          >
+            {passwordErrorArr.upperCase
+              ? "X - 1 uppercase letter required"
+              : "V - 1 uppercase letter present"}
+          </p>
+          <p
+            className="passErr"
+            key="4"
+            style={{ color: passwordErrorArr.digit ? "darkred" : "green" }}
+          >
+            {passwordErrorArr.digit
+              ? "X - 1 digit required"
+              : "V - 1 digit present"}
+          </p>
+          <p
+            className="passErr"
+            key="5"
+            style={{ color: passwordErrorArr.specChar ? "darkred" : "green" }}
+          >
+            {passwordErrorArr.specChar
+              ? "X - 1 special character required"
+              : "V - 1 special character present"}
+          </p>
+        </>
+      )}
 
-      <label htmlFor="pass2">Password 2</label>
+      <label htmlFor="passwordConfirm">Password 2</label>
       <input
-        id="pass2"
-        name="pass2"
+        id="passwordConfirm"
+        name="passwordConfirm"
         type="text"
-        onChange={pass2Handler}
-        onBlur={validatePass2}
-        value={pass2}
+        onChange={passwordConfirmHandler}
+        onBlur={validatepasswordConfirm}
+        value={passwordConfirm}
         disabled={emailErrorTaken}
       />
-      {pass2Error && <p className="passErr">Passwords do not match</p>}
+      {passwordConfirmError && (
+        <p className="passErr">Passwords do not match</p>
+      )}
 
       <input type="submit" />
     </form>
